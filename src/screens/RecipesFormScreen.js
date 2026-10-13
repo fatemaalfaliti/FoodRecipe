@@ -11,8 +11,28 @@ export default function RecipesFormScreen({ route, navigation }) {
     recipeToEdit ? recipeToEdit.description : ""
   );
 
-  const saverecipe = async () => {
- 
+ const saverecipe = async () => {
+    const newrecipe = { title, image, description };
+    try {
+      // 1. اقرأ الوصفات المحفوظة سابقاً
+      const existingrecipes = await AsyncStorage.getItem("customrecipes");
+      const recipes = existingrecipes ? JSON.parse(existingrecipes) : [];
+
+      // 2. تعديل أو إضافة
+      if (recipeToEdit !== undefined) {
+        recipes[recipeIndex] = newrecipe; // استبدل الوصفة في مكانها
+        await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
+        if (onrecipeEdited) onrecipeEdited(); // أخبر الشاشة السابقة بالتعديل
+      } else {
+        recipes.push(newrecipe); // أضف وصفة جديدة في الآخر
+        await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
+      }
+
+      // 3. ارجع للشاشة السابقة
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error saving the recipe:", error);
+    }
   };
 
   return (
