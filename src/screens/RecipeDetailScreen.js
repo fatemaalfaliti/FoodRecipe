@@ -67,19 +67,19 @@ export default function RecipeDetailScreen(props) {
         {/* Misc: time, servings, calories, difficulty */}
         <View style={styles.miscContainer} testID="miscContainer">
           <View style={styles.miscItem}>
-            <Text style={styles.miscIcon}>🕒</Text>
+            <Text style={styles.miscIcon}>⏱</Text>
             <Text style={styles.miscText}>35 Mins</Text>
           </View>
           <View style={styles.miscItem}>
-            <Text style={styles.miscIcon}>👥</Text>
+            <Text style={styles.miscIcon}>☺</Text>
             <Text style={styles.miscText}>03 Servings</Text>
           </View>
           <View style={styles.miscItem}>
-            <Text style={styles.miscIcon}>🔥</Text>
+            <Text style={styles.miscIcon}>♨</Text>
             <Text style={styles.miscText}>103 Cal</Text>
           </View>
           <View style={styles.miscItem}>
-            <Text style={styles.miscIcon}>🎚️</Text>
+            <Text style={styles.miscIcon}>★</Text>
             <Text style={styles.miscText}>Medium</Text>
           </View>
         </View>

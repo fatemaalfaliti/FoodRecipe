@@ -15,10 +15,10 @@ const favoritesSlice = createSlice({
       );
 
       if (existingIndex >= 0) {
-        // موجودة في المفضلة ← نحذفها
+        // already in favorites -> remove it
         state.favoriterecipes.splice(existingIndex, 1);
       } else {
-        // غير موجودة ← نضيفها
+        // not in favorites -> add it
         state.favoriterecipes.push(recipe);
       }
     },

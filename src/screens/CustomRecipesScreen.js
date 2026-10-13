@@ -16,7 +16,7 @@ export default function CustomRecipesScreen() {
     );
   }
 
-  // نحوّل النص إلى قائمة: كل سطر عنصر، ونتجاهل الأسطر الفارغة
+  // split text into a list: one item per line, skip empty lines
   const toList = (text) =>
     text ? text.split("\n").filter((line) => line.trim() !== "") : [];
   const ingredientsList = toList(recipe.ingredients);
@@ -56,7 +56,7 @@ export default function CustomRecipesScreen() {
           <Text style={styles.sectionTitle}>Ingredients</Text>
           {ingredientsList.length > 0 ? (
             ingredientsList.map((item, index) => (
-              <Text key={index} style={styles.contentText}>• {item}</Text>
+              <Text key={index} style={styles.contentText}>- {item}</Text>
             ))
           ) : (
             <Text style={styles.contentText}>No ingredients added.</Text>

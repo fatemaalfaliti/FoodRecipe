@@ -36,7 +36,7 @@ export default function MyRecipeScreen() {
 
     fetchrecipes();
 
-    // أعد جلب الوصفات كلما رجعنا لهذه الشاشة (بعد الإضافة أو التعديل)
+    // re-fetch recipes every time this screen comes back into focus
     const unsubscribe = navigation.addListener("focus", fetchrecipes);
     return unsubscribe;
   }, [navigation]);
