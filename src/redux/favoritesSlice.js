@@ -8,7 +8,20 @@ const favoritesSlice = createSlice({
   name: "favorites",
   initialState,
   reducers: {
-   
+    toggleFavorite: (state, action) => {
+      const recipe = action.payload;
+      const existingIndex = state.favoriterecipes.findIndex(
+        (item) => item.idFood === recipe.idFood
+      );
+
+      if (existingIndex >= 0) {
+        // موجودة في المفضلة ← نحذفها
+        state.favoriterecipes.splice(existingIndex, 1);
+      } else {
+        // غير موجودة ← نضيفها
+        state.favoriterecipes.push(recipe);
+      }
+    },
   },
 });
 
