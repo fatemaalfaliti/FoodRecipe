@@ -1,32 +1,13 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
-import { useDispatch, useSelector } from "react-redux";
-import { toggleFavorite } from "../redux/favoritesSlice";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function CustomRecipesScreen() {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-
   const route = useRoute();
-  const { recipe } = route.params || {}; // Pass the object as a parameter
+  const { recipe } = route.params || {};
 
-  const favoriteRecipe = useSelector(
-    (state) => state.favorites.favoriterecipes
-  );
-
-  // نفحص أولاً قبل استخدام recipe
   if (!recipe) {
     return (
       <View style={styles.container}>
@@ -35,11 +16,11 @@ export default function CustomRecipesScreen() {
     );
   }
 
-  const isFavourite = favoriteRecipe.includes(recipe.idCategory);
-
-  const handleToggleFavorite = () => {
-    dispatch(toggleFavorite(recipe));
-  };
+  // نحوّل النص إلى قائمة: كل سطر عنصر، ونتجاهل الأسطر الفارغة
+  const toList = (text) =>
+    text ? text.split("\n").filter((line) => line.trim() !== "") : [];
+  const ingredientsList = toList(recipe.ingredients);
+  const stepsList = toList(recipe.steps);
 
   return (
     <ScrollView
@@ -55,28 +36,44 @@ export default function CustomRecipesScreen() {
         ) : null}
       </View>
 
-      {/* Back and Favorite Buttons */}
+      {/* Back Button */}
       <View style={styles.topButtonsContainer} testID="topButtonsContainer">
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Text>GoBack</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleToggleFavorite}
-          style={styles.favoriteButton}
-        >
-          <Text>{isFavourite ? "♥" : "♡"}</Text>
         </TouchableOpacity>
       </View>
 
       {/* Recipe Details */}
       <View style={styles.contentContainer} testID="contentContainer">
         <Text style={styles.recipeTitle}>{recipe.title}</Text>
+
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Content</Text>
           <Text style={styles.contentText}>{recipe.description}</Text>
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Ingredients</Text>
+          {ingredientsList.length > 0 ? (
+            ingredientsList.map((item, index) => (
+              <Text key={index} style={styles.contentText}>• {item}</Text>
+            ))
+          ) : (
+            <Text style={styles.contentText}>No ingredients added.</Text>
+          )}
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Instructions</Text>
+          {stepsList.length > 0 ? (
+            stepsList.map((step, index) => (
+              <Text key={index} style={styles.contentText}>
+                {index + 1}. {step}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.contentText}>No instructions added.</Text>
+          )}
         </View>
       </View>
     </ScrollView>

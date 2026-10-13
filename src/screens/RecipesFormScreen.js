@@ -1,7 +1,7 @@
-import { View,Text,TextInput,TouchableOpacity,Image,StyleSheet,} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from "react-native";
 import React, { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {widthPercentageToDP as wp,heightPercentageToDP as hp,} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function RecipesFormScreen({ route, navigation }) {
   const { recipeToEdit, recipeIndex, onrecipeEdited } = route.params || {};
@@ -10,25 +10,28 @@ export default function RecipesFormScreen({ route, navigation }) {
   const [description, setDescription] = useState(
     recipeToEdit ? recipeToEdit.description : ""
   );
+  const [ingredients, setIngredients] = useState(
+    recipeToEdit && recipeToEdit.ingredients ? recipeToEdit.ingredients : ""
+  );
+  const [steps, setSteps] = useState(
+    recipeToEdit && recipeToEdit.steps ? recipeToEdit.steps : ""
+  );
 
- const saverecipe = async () => {
-    const newrecipe = { title, image, description };
+  const saverecipe = async () => {
+    const newrecipe = { title, image, description, ingredients, steps };
     try {
-      // 1. اقرأ الوصفات المحفوظة سابقاً
       const existingrecipes = await AsyncStorage.getItem("customrecipes");
       const recipes = existingrecipes ? JSON.parse(existingrecipes) : [];
 
-      // 2. تعديل أو إضافة
       if (recipeToEdit !== undefined) {
-        recipes[recipeIndex] = newrecipe; // استبدل الوصفة في مكانها
+        recipes[recipeIndex] = newrecipe;
         await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
-        if (onrecipeEdited) onrecipeEdited(); // أخبر الشاشة السابقة بالتعديل
+        if (onrecipeEdited) onrecipeEdited();
       } else {
-        recipes.push(newrecipe); // أضف وصفة جديدة في الآخر
+        recipes.push(newrecipe);
         await AsyncStorage.setItem("customrecipes", JSON.stringify(recipes));
       }
 
-      // 3. ارجع للشاشة السابقة
       navigation.goBack();
     } catch (error) {
       console.error("Error saving the recipe:", error);
@@ -36,9 +39,13 @@ export default function RecipesFormScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Text style={{ color: "#4F75FF", fontSize: hp(2.2) }}>Back</Text>
+      </TouchableOpacity>
+
       <TextInput
-        placeholder="Title"
+        placeholder="Recipe Name"
         value={title}
         onChangeText={setTitle}
         style={styles.input}
@@ -55,17 +62,31 @@ export default function RecipesFormScreen({ route, navigation }) {
         <Text style={styles.imagePlaceholder}>Upload Image URL</Text>
       )}
       <TextInput
-        placeholder="Description"
+        placeholder="Short Description"
         value={description}
         onChangeText={setDescription}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder={"Ingredients (one per line)\ne.g. 2 cups flour"}
+        value={ingredients}
+        onChangeText={setIngredients}
+        multiline={true}
+        numberOfLines={4}
+        style={[styles.input, { height: hp(15), textAlignVertical: "top" }]}
+      />
+      <TextInput
+        placeholder={"Step-by-step Instructions (one step per line)"}
+        value={steps}
+        onChangeText={setSteps}
         multiline={true}
         numberOfLines={4}
         style={[styles.input, { height: hp(20), textAlignVertical: "top" }]}
       />
       <TouchableOpacity onPress={saverecipe} style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>Save recipe</Text>
+        <Text style={styles.saveButtonText}>Save Recipe</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
